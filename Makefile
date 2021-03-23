@@ -15,5 +15,5 @@ upload:
 	python3 -m twine upload --repository pypi dist/*
 
 test:
-	# python -m unittest discover -v tests
+	python -m unittest discover -v tests
 	flake8

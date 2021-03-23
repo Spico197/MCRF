@@ -1,22 +1,31 @@
 # task
-task_name: plain_crf
+task_name: constraint_crf
 output_dir: outs
 
 # data
 train_filepath: data/weibo.train
 dev_filepath: data/weibo.dev
 test_filepath: data/weibo.test
-transform: CachedCharSegTSV
+transform: CachedCharSegTSVTransform
+max_seq_len: 128
 
 # model
-model: LSTMCRF
-hidden_size: 300
-crf_type: PlainCRF
+model: LSTMCRFModel
+emb_size: 300
+num_lstm_layers: 2
+hidden_size: 256
+crf_type: ConstraintCRF
+constraint_type: BIO
+dropout: 0.5
 
 # training
 random_seed: 2333
-optimizer: adam
+optimizer: Adam
 lr: !!float 1e-3
+num_epoch: 30
 train_batch_size: 64
 eval_batch_size: 64
 device: cuda:0
+local_rank: -1
+only_master_logging: true
+save_best_ckpt: true

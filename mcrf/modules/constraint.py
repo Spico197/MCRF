@@ -4,8 +4,9 @@ Constraint Conditional Random Field
 This CRF is implemented in:
     AllenNLP: https://github.com/allenai/allennlp/blob/main/allennlp/modules/conditional_random_field.py
 """
-from typing import List, Tuple, Dict, Union, Optional
 import math
+import warnings
+from typing import List, Tuple, Dict, Union, Optional
 
 import torch
 
@@ -23,8 +24,7 @@ def allowed_transitions(constraint_type: str, labels: Dict[int, str]) -> List[Tu
         Indicates which constraint to apply. Current choices are
         "BIO", "IOB1", "BIOUL", and "BMES".
     labels : `Dict[int, str]`, required
-        A mapping {label_id -> label}. Most commonly this would be the value from
-        Vocabulary.get_index_to_token_vocabulary()
+        A mapping {label_id -> label}.
     # Returns
     `List[Tuple[int, int]]`
         The allowed transitions (from_label_id, to_label_id).
@@ -160,7 +160,7 @@ class ConstraintCRF(torch.nn.Module):
         The number of tags.
     constraints : `List[Tuple[int, int]]`, optional (default = `None`)
         An optional list of allowed transitions (from_tag_id, to_tag_id).
-        These are applied to `viterbi_tags()` but do not affect `forward()`.
+        These are applied to `decode()` but do not affect `forward()`.
         These should be derived from `allowed_transitions` so that the
         start and end transitions are handled correctly for your tag type.
     include_start_end_transitions : `bool`, optional (default = `True`)
@@ -250,7 +250,7 @@ class ConstraintCRF(torch.nn.Module):
             stops = alpha
 
         # Finally we log_sum_exp along the num_tags dim, result is (batch_size,)
-        return torch.logsumexp(stops)
+        return torch.logsumexp(stops, -1)
 
     def _joint_likelihood(
         self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor
@@ -307,7 +307,7 @@ class ConstraintCRF(torch.nn.Module):
         return score
 
     def forward(
-        self, inputs: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
+        self, logits: torch.Tensor, tags: torch.Tensor, mask: torch.BoolTensor = None
     ) -> torch.Tensor:
         """
         Computes the log likelihood.
@@ -319,8 +319,8 @@ class ConstraintCRF(torch.nn.Module):
             # The code below fails in weird ways if this isn't a bool tensor, so we make sure.
             mask = mask.to(torch.bool)
 
-        log_denominator = self._input_likelihood(inputs, mask)
-        log_numerator = self._joint_likelihood(inputs, tags, mask)
+        log_denominator = self._input_likelihood(logits, mask)
+        log_numerator = self._joint_likelihood(logits, tags, mask)
 
         return torch.sum(log_numerator - log_denominator)
 
@@ -463,7 +463,7 @@ class ConstraintCRF(torch.nn.Module):
             # invalid/extremely unlikely evidence.
             if tag_observations[timestep - 1] != -1 and observation != -1:
                 if transition_matrix[tag_observations[timestep - 1], observation] < -10000:
-                    logger.warning(
+                    warnings.warn(
                         "The pairwise potential between tags you have passed as "
                         "observations is extremely unlikely. Double check your evidence "
                         "or transition potentials!"
@@ -500,8 +500,8 @@ class ConstraintCRF(torch.nn.Module):
 
         return viterbi_paths, viterbi_scores
 
-    def viterbi_tags(
-        self, logits: torch.Tensor, mask: torch.BoolTensor = None, top_k: int = None
+    def decode(
+        self, logits: torch.Tensor, mask: torch.BoolTensor = None, top_k: int = None, return_viterbi_score: Optional[bool] = False
     ) -> Union[List[VITERBI_DECODING], List[List[VITERBI_DECODING]]]:
         """
         Uses viterbi algorithm to find most likely tags for the given inputs.
@@ -570,7 +570,7 @@ class ConstraintCRF(torch.nn.Module):
             # At timestep 0 we must have the START_TAG
             tag_sequence[0, start_tag] = 0.0
             # At steps 1, ..., sequence_length we just use the incoming prediction
-            tag_sequence[1 : (sequence_length + 1), :num_tags] = masked_prediction
+            tag_sequence[1: (sequence_length + 1), :num_tags] = masked_prediction
             # And at the last timestep we must have the END_TAG
             tag_sequence[sequence_length + 1, end_tag] = 0.0
 
@@ -584,7 +584,10 @@ class ConstraintCRF(torch.nn.Module):
             for viterbi_path, viterbi_score in zip(viterbi_paths, viterbi_scores):
                 # Get rid of START and END sentinels and append.
                 viterbi_path = viterbi_path[1:-1]
-                top_k_paths.append((viterbi_path, viterbi_score.item()))
+                if not return_viterbi_score:
+                    top_k_paths.append(viterbi_path)
+                else:
+                    top_k_paths.append((viterbi_path, viterbi_score.item()))
             best_paths.append(top_k_paths)
 
         if flatten_output:

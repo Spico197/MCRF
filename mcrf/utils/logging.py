@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class Logger(object):
-    def __init__(self, name, log_path: Optional[str] = None, level: Optional[int] = logging.INFO):
+    def __init__(self, name: str, log_path: Optional[str] = None, level: Optional[int] = logging.INFO):
         self.name = name
         self.log_path = log_path
 

@@ -10,7 +10,7 @@ def set_seed(seed=0):
 
     Args:
         seed (int, optional): random seed. Defaults to 0.
-    """    
+    """
     os.environ['PYTHONHASHSEED'] = str(seed)
     random.seed(seed)
     np.random.seed(seed)

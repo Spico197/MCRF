@@ -37,7 +37,7 @@ class PlainCRF(nn.Module):
     .. _Viterbi algorithm: https://en.wikipedia.org/wiki/Viterbi_algorithm
     """
 
-    def __init__(self, num_tags: int, batch_first: bool = False) -> None:
+    def __init__(self, num_tags: int, batch_first: bool = True) -> None:
         if num_tags <= 0:
             raise ValueError(f'invalid number of tags: {num_tags}')
         super().__init__()
@@ -62,15 +62,15 @@ class PlainCRF(nn.Module):
         return f'{self.__class__.__name__}(num_tags={self.num_tags})'
 
     def forward(
-            self,
-            emissions: torch.Tensor,
-            tags: torch.LongTensor,
-            mask: Optional[torch.ByteTensor] = None,
-            reduction: str = 'sum',
+        self,
+        logits: torch.Tensor,
+        tags: torch.LongTensor,
+        mask: Optional[torch.BoolTensor] = None,
+        reduction: str = 'sum',
     ) -> torch.Tensor:
         """Compute the conditional log likelihood of a sequence of tags given emission scores.
         Args:
-            emissions (`~torch.Tensor`): Emission score tensor of size
+            logits (`~torch.Tensor`): Emission score tensor of size
                 ``(seq_length, batch_size, num_tags)`` if ``batch_first`` is ``False``,
                 ``(batch_size, seq_length, num_tags)`` otherwise.
             tags (`~torch.LongTensor`): Sequence of tags tensor of size
@@ -86,21 +86,23 @@ class PlainCRF(nn.Module):
             `~torch.Tensor`: The log likelihood. This will have size ``(batch_size,)`` if
             reduction is ``none``, ``()`` otherwise.
         """
-        self._validate(emissions, tags=tags, mask=mask)
+        if mask is not None:
+            mask = mask.byte()
+        self._validate(logits, tags=tags, mask=mask)
         if reduction not in ('none', 'sum', 'mean', 'token_mean'):
             raise ValueError(f'invalid reduction: {reduction}')
         if mask is None:
             mask = torch.ones_like(tags, dtype=torch.uint8)
 
         if self.batch_first:
-            emissions = emissions.transpose(0, 1)
+            logits = logits.transpose(0, 1)
             tags = tags.transpose(0, 1)
             mask = mask.transpose(0, 1)
 
         # shape: (batch_size,)
-        numerator = self._compute_score(emissions, tags, mask)
+        numerator = self._compute_score(logits, tags, mask)
         # shape: (batch_size,)
-        denominator = self._compute_normalizer(emissions, mask)
+        denominator = self._compute_normalizer(logits, mask)
         # shape: (batch_size,)
         llh = numerator - denominator
 
@@ -113,11 +115,11 @@ class PlainCRF(nn.Module):
         assert reduction == 'token_mean'
         return llh.sum() / mask.float().sum()
 
-    def decode(self, emissions: torch.Tensor,
-               mask: Optional[torch.ByteTensor] = None) -> List[List[int]]:
+    def decode(self, logits: torch.Tensor,
+               mask: Optional[torch.BoolTensor] = None) -> List[List[int]]:
         """Find the most likely tag sequence using Viterbi algorithm.
         Args:
-            emissions (`~torch.Tensor`): Emission score tensor of size
+            logits (`~torch.Tensor`): Emission score tensor of size
                 ``(seq_length, batch_size, num_tags)`` if ``batch_first`` is ``False``,
                 ``(batch_size, seq_length, num_tags)`` otherwise.
             mask (`~torch.ByteTensor`): Mask tensor of size ``(seq_length, batch_size)``
@@ -125,15 +127,15 @@ class PlainCRF(nn.Module):
         Returns:
             List of list containing the best tag sequence for each batch.
         """
-        self._validate(emissions, mask=mask)
+        self._validate(logits, mask=mask)
         if mask is None:
-            mask = emissions.new_ones(emissions.shape[:2], dtype=torch.uint8)
+            mask = logits.new_ones(logits.shape[:2], dtype=torch.uint8)
 
         if self.batch_first:
-            emissions = emissions.transpose(0, 1)
+            logits = logits.transpose(0, 1)
             mask = mask.transpose(0, 1)
 
-        return self._viterbi_decode(emissions, mask)
+        return self._viterbi_decode(logits, mask)
 
     def _validate(
             self,

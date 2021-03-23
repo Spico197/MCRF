@@ -21,22 +21,21 @@ class YamlConfig(object):
 
         self.output_dir = os.path.join(self.output_dir, self.task_name)
         __config.update({"output_dir": self.output_dir})
+        self._config = __config
 
         overwritten_flag = False
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
         else:
             overwritten_flag = True
-        
+
         self.logger = Logger(
             self.task_name, log_path=os.path.join(self.output_dir, "log.log"))
 
         if overwritten_flag:
             self.logger.warning("Overwrite output directory.")
 
-        with open(
-            os.path.join(self.output_dir, "config.yaml"),
-            'wt', encoding='utf-8') as fout:
+        with open(os.path.join(self.output_dir, "config.yaml"), 'wt', encoding='utf-8') as fout:
             yaml.dump(__config, fout)
 
         self.device = torch.device(self.device)
