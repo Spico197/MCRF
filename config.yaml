@@ -1,0 +1,22 @@
+# task
+task_name: plain_crf
+output_dir: outs
+
+# data
+train_filepath: data/weibo.train
+dev_filepath: data/weibo.dev
+test_filepath: data/weibo.test
+transform: CachedCharSegTSV
+
+# model
+model: LSTMCRF
+hidden_size: 300
+crf_type: PlainCRF
+
+# training
+random_seed: 2333
+optimizer: adam
+lr: !!float 1e-3
+train_batch_size: 64
+eval_batch_size: 64
+device: cuda:0
