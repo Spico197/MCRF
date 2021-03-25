@@ -1,6 +1,5 @@
 import setuptools
 
-
 from mcrf import __version__
 
 
@@ -16,14 +15,12 @@ setuptools.setup(
     description="Multiple CRF implementation for PyTorch",
     long_description_content_type="text/markdown",
     long_description=long_description,
-    packages=[
-        "mcrf"
-    ],
+    packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.6',
     install_requires=[
     ],
     package_data={

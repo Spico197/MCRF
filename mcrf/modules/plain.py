@@ -3,9 +3,8 @@ Plain Conditional Random Field
 
 This CRF is implemented in:
     pytorch-crf: https://github.com/kmkurn/pytorch-crf
+    pytorch-crf version = '0.7.2'
 """
-
-__version__ = '0.7.2'
 
 from typing import List, Optional
 

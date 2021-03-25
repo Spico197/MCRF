@@ -4,7 +4,7 @@ from typing import DefaultDict, List, Tuple
 
 from .dataset import CachedDataset
 from .manager import CachedManager
-from .transform import CachedCharSegTSVTransform
+from .transform import CachedCharSegTSVTransform, CachedCharTSVTransform
 from .collate_function import weibo_collate_fn
 
 

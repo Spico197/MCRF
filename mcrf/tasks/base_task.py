@@ -65,7 +65,7 @@ class BaseTask(object):
                 raise ValueError(f"Model loading failed. self.model={self.optimizer}, stored_dict_keys={store_dict.keys()}")
         else:
             self.logging("Not load optimizer")
-        
+
         if load_data_manager:
             self.data_manager = store_dict['data_manager']
 

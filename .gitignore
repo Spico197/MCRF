@@ -140,3 +140,4 @@ cython_debug/
 # mcrf
 outs/
 .vscode/
+nohup.out

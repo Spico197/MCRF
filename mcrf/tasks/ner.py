@@ -23,6 +23,14 @@ class NERTask(BaseTask):
             crf_class = partial(
                 crf_class, constraints=modules.allowed_transitions(
                     self.config.constraint_type, self.data_manager.transform.tag_lbe.id2label))
+        elif self.config.crf_type == "MaskedCRF":
+            crf_class = getattr(modules, self.config.crf_type)
+            crf_class = partial(
+                crf_class,
+                constraints=modules.allowed_transitions(
+                    self.config.constraint_type, self.data_manager.transform.tag_lbe.id2label),
+                masked_training=self.config.masked_training,
+                masked_decoding=self.config.masked_decoding)
         else:
             raise NotImplementedError
         crf = crf_class(self.config.num_tags)

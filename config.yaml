@@ -1,31 +1,37 @@
 # task
-task_name: constraint_crf
+task_name: msra_masked_crf_decoding
 output_dir: outs
 
 # data
-train_filepath: data/weibo.train
-dev_filepath: data/weibo.dev
-test_filepath: data/weibo.test
-transform: CachedCharSegTSVTransform
-max_seq_len: 128
+# train_filepath: data/weibo.train
+# dev_filepath: data/weibo.dev
+# test_filepath: data/weibo.test
+# transform: CachedCharSegTSVTransform
+train_filepath: data/msra.train
+dev_filepath: data/msra.test
+test_filepath: data/msra.test
+transform: CachedCharTSVTransform
+max_seq_len: 250
 
 # model
 model: LSTMCRFModel
-emb_size: 300
-num_lstm_layers: 2
-hidden_size: 256
-crf_type: ConstraintCRF
+emb_size: 100
+num_lstm_layers: 1
+hidden_size: 200
+crf_type: MaskedCRF
+masked_training: false
+masked_decoding: true
 constraint_type: BIO
 dropout: 0.5
 
 # training
 random_seed: 2333
-optimizer: Adam
-lr: !!float 1e-3
-num_epoch: 30
-train_batch_size: 64
-eval_batch_size: 64
-device: cuda:0
+optimizer: SGD
+lr: 0.015
+num_epoch: 50
+train_batch_size: 8
+eval_batch_size: 128
+device: cuda:3
 local_rank: -1
 only_master_logging: true
 save_best_ckpt: true

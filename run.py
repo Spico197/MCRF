@@ -17,8 +17,9 @@ if __name__ == "__main__":
     setattr(config, 'vocab_size', len(data_manager.transform.vocab))
 
     task = NERTask(config, data_manager)
+    task.logging(config._config)
     task.train()
 
     task.load(os.path.join(config.output_dir, "ckpt", "LSTMCRFModel.best.pth"))
     results = task.predict(["佟湘玉和李大嘴都在同福客栈工作。"])
-    print(results)
+    task.logging(results)
