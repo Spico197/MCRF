@@ -2,6 +2,28 @@
 
 **NOT Official** Pytorch implemented Masked CRF.
 
+## Installation
+
+### Dependencies
+- Python >= 3.6
+  - torch == 1.5.1 (better > 1.0)
+  - tqdm == 4.53.0
+  - pyyaml == 5.3.1
+
+### Download and Install
+
+1. Editable installation:
+
+```bash
+pip install -e .
+```
+
+2. Install from PyPI:
+
+```bash
+pip install pytorch-mcrf -i https://pypi.org/simple
+```
+
 ## Quick Start
 
 ### Settings
@@ -24,11 +46,11 @@ Micro-F1 results
 | ---------: | :-------: | ------------: | -----------------: |
 |          8 |    SGD    |         0.015 |                128 |
 
-| Method                      |    Dev |   Test |
-| :-------------------------- | -----: | -----: |
-| PlainCRF                    | 57.564 | 51.733 |
-| MaskedCRF ( decoding only ) | 55.662 | 51.351 |
-| MaskedCRF                   | 55.380 | 50.287 |
+| Method                      |    Dev |   Test | #Illegal Tags |
+| :-------------------------- | -----: | -----: | ------------: |
+| PlainCRF                    | 57.564 | 51.733 |             4 |
+| MaskedCRF ( decoding only ) | 55.662 | 51.351 |             0 |
+| MaskedCRF                   | 55.380 | 50.287 |             0 |
 
 
 ### MSRA
@@ -39,11 +61,11 @@ Micro-F1 results
 
 Model is selected directly from test set since there is no official dev set.
 
-| Method                      |  Dev | Test |
-| :-------------------------- | ---: | ---: |
-| PlainCRF                    |      |      |
-| MaskedCRF ( decoding only ) |      |      |
-| MaskedCRF                   |      |      |
+| Method                      | Test | #Illegal Tags |
+| :-------------------------- | ---: | ------------: |
+| PlainCRF                    |      |               |
+| MaskedCRF ( decoding only ) |      |               |
+| MaskedCRF                   |      |               |
 
 
 ## Acknowledgements

@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from mcrf import modules
 from mcrf import metrics
-from mcrf.helper import get_entities_from_tag_seq
+from mcrf.helper import get_entities_from_tag_seq, get_num_illegal_tags_from_tag_seq
 from .base_task import BaseTask
 
 
@@ -94,10 +94,12 @@ class NERTask(BaseTask):
 
         gold_ents_all = []
         pred_ents_all = []
+        # num_illegal_tag = 0
         for seq, tag, pred in zip(seqs, tags, preds):
             seq = self.data_manager.transform.vocab.convert_ids_to_tokens(seq)
             tag = self.data_manager.transform.tag_lbe.decode(tag)
             pred = self.data_manager.transform.tag_lbe.decode(pred)
+            # num_illegal_tag += get_num_illegal_tags_from_tag_seq(pred)
             gold_ents = get_entities_from_tag_seq(seq, tag)
             pred_ents = get_entities_from_tag_seq(seq, pred)
             gold_ents_all.append(gold_ents)

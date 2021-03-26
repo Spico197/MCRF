@@ -1,17 +1,17 @@
 # task
-task_name: msra_masked_crf_decoding
+task_name: weibo_masked_crf
 output_dir: outs
 
 # data
-# train_filepath: data/weibo.train
-# dev_filepath: data/weibo.dev
-# test_filepath: data/weibo.test
-# transform: CachedCharSegTSVTransform
-train_filepath: data/msra.train
-dev_filepath: data/msra.test
-test_filepath: data/msra.test
-transform: CachedCharTSVTransform
-max_seq_len: 250
+train_filepath: data/weibo.train
+dev_filepath: data/weibo.dev
+test_filepath: data/weibo.test
+transform: CachedCharSegTSVTransform
+# train_filepath: data/msra.train
+# dev_filepath: data/msra.test
+# test_filepath: data/msra.test
+# transform: CachedCharTSVTransform
+max_seq_len: 128
 
 # model
 model: LSTMCRFModel
@@ -19,7 +19,7 @@ emb_size: 100
 num_lstm_layers: 1
 hidden_size: 200
 crf_type: MaskedCRF
-masked_training: false
+masked_training: true
 masked_decoding: true
 constraint_type: BIO
 dropout: 0.5

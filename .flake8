@@ -9,7 +9,9 @@ ignore =
     # do not assign a lambda expression, use a def
     E731,
     # too many comment symbols
-    E266
+    E266,
+    # module level import not at top of file
+    E402
 exclude =
     # No need to traverse our git directory
     .git,

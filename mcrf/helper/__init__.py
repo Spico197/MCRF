@@ -1,5 +1,4 @@
 from collections import defaultdict
-from os import EX_CANTCREAT
 from typing import DefaultDict, List, Tuple
 
 from .dataset import CachedDataset
@@ -94,3 +93,37 @@ def get_entities_from_tag_seq(chars: List[str], tags: List[str]) -> DefaultDict[
             ent_start = -1
 
     return entities
+
+
+def get_num_illegal_tags_from_tag_seq(tags: List[str]) -> int:
+    r"""
+    get number of illegal tags from a seqence of chars and tags, BIO and BMES schemas are both supported
+
+    Args:
+        tags: list of tags (in string format), like `B`, `I-Subj`, `B_PER`.
+            if there is no postfix type string, entities will not be categorized
+
+    Returns:
+        number of illegal tags
+    """
+    num_illegal_tags = 0
+    last_type = "default"
+    last_tag = "O"
+
+    for tag in tags:
+        if len(tag) > 2:
+            curr_type = tag[2:]
+        else:
+            curr_type = "default"
+
+        if tag[0] in "IME":
+            if last_tag not in "BIM" or curr_type != last_type:
+                # illegal case
+                num_illegal_tags += 1
+        elif tag[0] == 'S' and last_tag in "IM":
+            num_illegal_tags += 1
+
+        last_type = curr_type
+        last_tag = tag[0]
+
+    return num_illegal_tags

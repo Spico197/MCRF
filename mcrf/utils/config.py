@@ -1,6 +1,7 @@
 import os
-import yaml
+from typing import Optional
 
+import yaml
 import torch
 
 from . import set_seed
@@ -8,7 +9,15 @@ from .logging import Logger
 
 
 class YamlConfig(object):
-    def __init__(self, config_filepath: str):
+    r"""Easier utility class for configuration.
+
+    Args:
+        config_filepath: filepath to `YAML` config file
+        make_taskdir: whether to make new sub-folder under `output_dir`.
+            useful to set False when you load a checkpoint to predict
+            something with its dumped config file.
+    """
+    def __init__(self, config_filepath: str, make_taskdir: Optional[bool] = True):
         self.config_abs_path = os.path.abspath(config_filepath)
 
         # do not use `with` expression here in order to find errors ealier
@@ -19,7 +28,8 @@ class YamlConfig(object):
         for key, val in __config.items():
             setattr(self, key, val)
 
-        self.output_dir = os.path.join(self.output_dir, self.task_name)
+        if make_taskdir:
+            self.output_dir = os.path.join(self.output_dir, self.task_name)
         __config.update({"output_dir": self.output_dir})
         self._config = __config
 

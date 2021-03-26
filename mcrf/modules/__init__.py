@@ -193,7 +193,7 @@ def get_transition_mask_mat_from_allowed(
             end_mask[from_label_index] = 1.0
         else:
             trans_mask[from_label_index, to_label_index] = 1.0
-    
+
     trans_mask *= 100
     start_mask *= 100
     end_mask *= 100
