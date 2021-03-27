@@ -61,11 +61,11 @@ Micro-F1 results
 
 Model is selected directly from test set since there is no official dev set.
 
-| Method                      | Test | #Illegal Tags |
-| :-------------------------- | ---: | ------------: |
-| PlainCRF                    |      |               |
-| MaskedCRF ( decoding only ) |      |               |
-| MaskedCRF                   |      |               |
+| Method                      |   Test | #Illegal Tags |
+| :-------------------------- | -----: | ------------: |
+| PlainCRF                    | 86.274 |             1 |
+| MaskedCRF ( decoding only ) | 86.285 |             0 |
+| MaskedCRF                   | 84.714 |             0 |
 
 
 ## Acknowledgements
