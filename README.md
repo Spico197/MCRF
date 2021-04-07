@@ -74,3 +74,6 @@ Model is selected directly from test set since there is no official dev set.
 - [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
 - [allennlp](https://github.com/allenai/allennlp)
 - [ChineseWeiboNER](https://github.com/OYE93/Chinese-NLP-Corpus/tree/master/NER/)
+
+## UPDATES
+- v0.0.2: fix setuptools packages finding issue
