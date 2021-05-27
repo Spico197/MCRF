@@ -92,6 +92,9 @@ def get_entities_from_tag_seq(chars: List[str], tags: List[str]) -> DefaultDict[
             last_type = ""
             ent_start = -1
 
+    if len(ent) > 0:
+        entities[last_type].append((ent, last_type, ent_start, ent_start + len(ent)))
+
     return entities
 
 

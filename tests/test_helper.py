@@ -23,3 +23,9 @@ class HelperTestCase(unittest.TestCase):
         ]
         num_illegals = helper.get_num_illegal_tags_from_tag_seq(tags)
         self.assertEqual(num_illegals, 3)
+
+    def test_special_bad_case(self):
+        tags = ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'B-Symptom', 'I-Symptom', 'O', 'O', 'O', 'O', 'B-Symptom', 'I-Symptom']
+        chrs = "就今天一天喝完药出汗，还伴有干咳"
+        entities = helper.get_entities_from_tag_seq(chrs, tags)
+        print(entities)
