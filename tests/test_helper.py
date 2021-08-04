@@ -29,3 +29,9 @@ class HelperTestCase(unittest.TestCase):
         chrs = "就今天一天喝完药出汗，还伴有干咳"
         entities = helper.get_entities_from_tag_seq(chrs, tags)
         print(entities)
+
+    def test_case(self):
+        tags = ['O', 'O', 'B-Symptom', 'I-Symptom', 'I-Symptom', 'O', 'O', 'O']
+        chrs = ['孩', '子', '拉', '肚', '子', '几', '天', '啦']
+        entities = helper.get_entities_from_tag_seq(chrs, tags)
+        print(entities)
