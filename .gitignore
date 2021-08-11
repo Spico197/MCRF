@@ -141,3 +141,4 @@ cython_debug/
 outs/
 .vscode/
 nohup.out
+!logs/*.log

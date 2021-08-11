@@ -1,8 +1,8 @@
-# Masked CRF
+<h1 style="text-align:center">Masked CRF</h1>
 
 **NOT Official** Pytorch implemented Masked CRF.
 
-## Installation
+## ⚙️Installation
 
 ### Dependencies
 - Python >= 3.6
@@ -24,7 +24,7 @@ pip install -e .
 pip install pytorch-mcrf -i https://pypi.org/simple
 ```
 
-## Quick Start
+## 🚀Quick Start
 
 ### Settings
 
@@ -36,7 +36,7 @@ All the settings are in `config.yaml`, you can change model settings from this f
 python run.py
 ```
 
-## Results
+## 📝Results
 
 Micro-F1 results
 
@@ -48,9 +48,9 @@ Micro-F1 results
 
 | Method                      |    Dev |   Test | #Illegal Tags |
 | :-------------------------- | -----: | -----: | ------------: |
-| PlainCRF                    | 57.564 | 51.733 |             4 |
-| MaskedCRF ( decoding only ) | 55.662 | 51.351 |             0 |
-| MaskedCRF                   | 55.380 | 50.287 |             0 |
+| PlainCRF                    | 57.563 | 51.792 |             4 |
+| MaskedCRF ( decoding only ) | 57.143 | 51.656 |             0 |
+| MaskedCRF                   | 55.380 | 50.358 |             0 |
 
 
 ### MSRA
@@ -63,17 +63,18 @@ Model is selected directly from test set since there is no official dev set.
 
 | Method                      |   Test | #Illegal Tags |
 | :-------------------------- | -----: | ------------: |
-| PlainCRF                    | 86.274 |             1 |
-| MaskedCRF ( decoding only ) | 86.285 |             0 |
-| MaskedCRF                   | 84.714 |             0 |
+| PlainCRF                    | 85.163 |             0 |
+| MaskedCRF ( decoding only ) | 85.163 |             0 |
+| MaskedCRF                   | 84.693 |             0 |
 
 
-## Acknowledgements
+## ❤️Acknowledgements
 
 - Official: [MaskedCRF](https://github.com/DandyQi/MaskedCRF)
 - [pytorch-crf](https://github.com/kmkurn/pytorch-crf)
 - [allennlp](https://github.com/allenai/allennlp)
 - [ChineseWeiboNER](https://github.com/OYE93/Chinese-NLP-Corpus/tree/master/NER/)
 
-## UPDATES
+## ✨UPDATES
+- v0.0.3: fix an issue when recovering entities from tags
 - v0.0.2: fix setuptools packages finding issue
